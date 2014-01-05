@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" href="css/aide-aux-devoirs.css">
+		<link rel="stylesheet" href="css/parametres.css">
+		<script src="javascript/jquery-2.0.3.min.js"></script>
+		<script src="javascript/key-codes.js"></script>
+		<script src="javascript/synthese-vocale.js"></script>
+
+		<script src="javascript/aide-aux-devoirs.js"></script>
+		<script src="javascript/parametres.js"></script>
+	</head>
+	<body>
+		<div id="menu">
+			<a id="epreuve-addition" href="#">Addition</a>
+			<a id="epreuve-addition-a-trous" href="#">Addition &agrave; trous</a>
+			<a id="epreuve-orthographe" href="#">Orthographe</a>
+		</div>
+		<div id="jeu">
+			<div id="question">
+				<div id="epreuve">
+				</div>
+				<div id="resultat">
+					<input id="inputResultat" type="hidden" />
+					<div id="resultat-bon">Bonne r&eacute;ponse !</div>
+					<div id="resultat-mauvais">Mauvaise r&eacute;ponse</div>
+				</div>
+			</div>
+			<div id="score">
+				<h1>Score</h1>
+				<div>
+					<div id="score-bon">0</div>
+					<div id="score-mauvais">0</div>
+				</div>
+				<a id="lnkOuvrirParametres" href="#">Param&egrave;tres</a>
+			</div>
+		</div>
+		<div id="parametres">
+			<div id="parametres-contenu"></div>
+			<a id="lnkFermerParametres" href="#">Fermer</a>
+		</div>
+	</body>
+</html>

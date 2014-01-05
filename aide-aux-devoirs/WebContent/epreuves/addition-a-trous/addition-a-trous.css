@@ -1,0 +1,27 @@
+input.digit {
+	width: 1.5em;
+	height: 1.5em;
+	text-align: center;
+	font-size: 1.5em;
+}
+
+input.retenue {
+	width: 1em;
+	height: 1em;
+	text-align: center;
+	font-size: 1em;
+	background-color: orange;
+}
+
+input.saisie-utilisateur {
+	border: 1px dashed black;
+}
+
+tr.resultat td{
+	border-top: 2px solid black;
+}
+
+#EpvAdditionATrous_Question table {
+	border-collapse: collapse;
+	margin: auto;
+}

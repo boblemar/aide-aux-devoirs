@@ -1,0 +1,81 @@
+h1 {
+	font-family: "Impact";
+	font-size: 2em;
+}
+
+#question {
+	background-color: yellow;
+	border-radius: 3em;
+	padding: 1em;
+	width: 20em;
+	text-align: center;
+}
+
+#score {
+	color: white;
+	background-color: blue;
+	border-radius: 3em;
+	padding: 1em;
+	margin-top: 1em;
+	width: 20em;
+	text-align: center;
+}
+
+#score a {
+	color: white;
+}
+
+#score-bon {
+	background-image: url(../images/smiley-bon.png);
+	background-repeat: no-repeat;
+	color: #00cb43;
+	display: inline;
+	padding-left: 60px;
+	padding-top: 10px;
+	height: 50px;
+	width: 70px;
+	vertical-align: middle;
+	font-size:2em;
+	
+}
+
+#score-mauvais {
+	background-image: url(../images/smiley-mauvais.png);
+	background-repeat: no-repeat;
+	color: #a00202;
+	display: inline;
+	padding-left: 60px;
+	padding-top: 10px;
+	height: 50px;
+	width: 70px;
+	vertical-align: middle;
+	font-size:2em;
+	margin-left: 2em;
+}
+
+#resultat-mauvais {
+	color: red;
+	display: none;
+}
+
+#parametres {
+	display: none;
+	position: absolute;
+	border-radius: 3em;
+	padding: 1em;
+	background-color: grey;
+	border: 2px black solid;
+	width: 20em;
+}
+
+#menu {
+	width: 20em;
+	margin: 1em;
+}
+
+#menu a {
+	background-color: green;
+	color: white;
+	border-radius: 1em;
+	padding: 0.3em;
+}
