@@ -85,7 +85,6 @@ $(document).ready(function() {
 					epreuves[defEpreuve.nom] = epv;
 					
 					if (epreuvesChargees()) {
-						console.trace('go !');
 						selectionnerEpreuve(epreuve);
 					}
 				};
@@ -97,11 +96,11 @@ $(document).ready(function() {
 });
 
 function epreuvesChargees() {
-	definitionEpreuves.forEach(function(e) {
-		if 	(!epreuve[e.nom]) {
+	for (var i = 0 ; i < definitionEpreuves.length ; i++) {
+		if 	(!epreuves[definitionEpreuves[i].nom]) {
 			return false;
 		}
-	});
+	}
 	
 	return true;
 }

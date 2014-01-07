@@ -6,7 +6,7 @@ $(document).ready(function() {
 		enregistrerParametres(nomJoueur);
 		
 		// On génère une nouvelle question
-		selectionnerEpreuve(epreuveEnCours.nomEpreuve());
+		selectionnerEpreuve(epreuveEnCours.NomEpreuve);
 		
 		$("#parametres").fadeOut();
 	});

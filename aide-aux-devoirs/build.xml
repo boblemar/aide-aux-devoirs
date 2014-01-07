@@ -6,16 +6,15 @@
 			description="Transfert des sources par FTP de tous les fichiers">
 		<echo>Debut de la publication</echo>
 		<ftp	server="31.170.164.162"
+				passive="true"
 				userid="u532344972"
 				password="james1"
 				depends="no"
 				binary="yes"
 				verbose="yes"
 				remotedir="/public_html/aide-aux-devoirs-test">
-
 			<fileset	dir=".">
-				<!--<include	name="**/*" />-->
-				<!--<modified />-->
+				<modified />
 			</fileset>
 		</ftp>
 		<echo>Fin de la publication</echo>

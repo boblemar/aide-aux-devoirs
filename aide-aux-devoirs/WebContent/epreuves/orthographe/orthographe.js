@@ -1,113 +1,18 @@
 /*
-{
-	"nom": "orthographe",
-	"parametres": {
-		"listes": [
-			{
-				"nom": "liste 1",
-				"termes": [
-					"bonjour",
-					"au revoir"
-				],
-				"active": "true"
-			}
-		]
-	}
-}
-*/
-
+ * Constructeur.
+ */
 function EpvOrthographe(parametres, validationCallback) {
-	var _nomEpreuve			 	= 'orthographe';
-	var _validationCallback		= function() { validationCallback(); };
-	var _listesMots				= [];
-	var _termesEnCours			= [];
-	var _cheminsCss				= ['orthographe.css'];
-
-	this.nomEpreuve				= function() { return _nomEpreuve; };
+	EpvBaseClass.call(this, parametres, validationCallback);
 	
-	initialiserMembres(parametres);
+	this.NomEpreuve				= 'orthographe';
+	this.CheminsCss				= ['css/orthographe.css'];
 	
-	function initialiserMembres(parametres) {
-		if (parametres) {
-			_listesMots		= parametres.parametres.listes;
-			_termesEnCours	= getTermes(_listesMots);
-		}
-	}
-
-	this.chargerDependances = function(baseRep) {
-		// Ajout des css
-		var head	= document.getElementsByTagName('head').item(0);
-		
-		_cheminsCss.forEach(function(fichier) {
-			var link	= document.createElement("link");
-			link.rel	= 'stylesheet';
-			link.href	= baseRep + fichier;
-			head.appendChild(link);
-		});
-	};
+	var that					= this;
 	
-	this.initialiserEpreuve = function(id) {
-		var thisClass = this;
-
-		$(id).html(	'<h1>Orthographe</h1>' +
-					'<div id="EpvOrthographe_Question">' +
-					'	Ecrits le mot' +
-					'	<div id="EpvOrthographe_Repeter">&nbsp;</div>' +
-					'	<input type="hidden" id="EpvOrthographe_txtMot" />' +
-					'</div>' +
-					'<div id="EpvOrthographe_saisie">' +
-					'	R&eacute;ponse :' +
-					'	<input type="text" id="EpvOrthographe_txtSaisie" />' +
-					'	<input type="submit" id="EpvOrthographe_validation" value="OK" />' +
-					'</div>' +
-					'</h1>');
-		
-		$("#EpvOrthographe_validation").click(function() {
-			_validationCallback();
-		});
-
-		$("#EpvOrthographe_txtSaisie").keyup(function(event){
-			if (event.keyCode == 13) {
-				_validationCallback();
-			}
-		});
-		
-		$("#EpvOrthographe_Repeter").click(function() {
-			thisClass.genererQuestion(false);
-		});
-	};
+	this._listesMots			= [];
+	this._termesEnCours			= [];
 	
-	this.genererQuestion = function(nouvelleQuestion) {
-		if (nouvelleQuestion) {
-			$("#EpvOrthographe_txtSaisie").val("");
-			var ancienMot = $("#EpvOrthographe_txtMot").val();
-			$("#EpvOrthographe_txtMot").val("");
-			$("#EpvOrthographe_txtSaisie").val("");
-			
-			if (_termesEnCours.length > 0) {
-				$("#EpvOrthographe_txtMot").val(_termesEnCours[0]);
-			} else {
-				alert("Aucun mot actif ! V&eacute;rifiez la configuration !");
-			}
-
-			for (var i = 1 ; i < _termesEnCours.length ; i++) {
-				if (ancienMot === _termesEnCours[i-1]) {
-					$("#EpvOrthographe_txtMot").val(_termesEnCours[i]);
-				}
-			}
-		} else {
-			
-		}
-		
-		parler($("#EpvOrthographe_txtMot").val());
-		$("#txtSaisie").focus();
-	};
-	
-	this.validerReponse = function() {
-		return $("#EpvOrthographe_txtMot").val().toLowerCase() === $("#EpvOrthographe_txtSaisie").val().toLowerCase();
-	};
-
-	function getTermes(listes) {
+	this.getTermes = function(listes)  {
 		var listesActives	= listes.filter(function(l) { return l.active; });
 		var termes			= [];
 		
@@ -120,8 +25,127 @@ function EpvOrthographe(parametres, validationCallback) {
 		} else {
 			return [];
 		}
-	}
+	};
+	
+	initialiserMembres(parametres);
+	
+	function initialiserMembres(parametres) {
+		if (parametres) {
+			that._listesMots		= parametres.parametres.listes;
+			that._termesEnCours		= that.getTermes(that._listesMots);
+		}
+	}	
+}
 
+// Héritage du prototype de la classe mère.
+EpvOrthographe.prototype = new EpvBaseClass();
+
+/*
+ * Description
+ * 		Initialise le panneau de l'épreuve
+ * Paramètres
+ * 		id:			L'identifiant du div acceuillant la représentation de l'épreuve.
+ */
+EpvOrthographe.prototype.initialiserEpreuve = function(id) {
+	var that = this;
+
+	$(id).html(	'<h1>Orthographe</h1>' +
+				'<div id="EpvOrthographe_Question">' +
+				'	Ecrits le mot' +
+				'	<div id="EpvOrthographe_Repeter">&nbsp;</div>' +
+				'	<input type="hidden" id="EpvOrthographe_txtMot" />' +
+				'</div>' +
+				'<div id="EpvOrthographe_saisie">' +
+				'	R&eacute;ponse :' +
+				'	<input type="text" id="EpvOrthographe_txtSaisie" />' +
+				'	<input type="submit" id="EpvOrthographe_validation" value="OK" />' +
+				'</div>' +
+				'</h1>');
+	
+	$("#EpvOrthographe_validation").click(function() {
+		that.validationCallback();
+	});
+
+	$("#EpvOrthographe_txtSaisie").keyup(function(event){
+		if (event.keyCode == 13) {
+			that.validationCallback();
+		}
+	});
+	
+	$("#EpvOrthographe_Repeter").click(function() {
+		that.genererQuestion(false);
+	});
+};
+
+EpvOrthographe.prototype.genererQuestion = function(nouvelleQuestion) {
+	if (nouvelleQuestion) {
+		$("#EpvOrthographe_txtSaisie").val("");
+		var ancienMot = $("#EpvOrthographe_txtMot").val();
+		$("#EpvOrthographe_txtMot").val("");
+		$("#EpvOrthographe_txtSaisie").val("");
+		
+		if (this._termesEnCours.length > 0) {
+			$("#EpvOrthographe_txtMot").val(this._termesEnCours[0]);
+		} else {
+			alert("Aucun mot actif ! V&eacute;rifiez la configuration !");
+		}
+
+		for (var i = 1 ; i < this._termesEnCours.length ; i++) {
+			if (ancienMot === this._termesEnCours[i-1]) {
+				$("#EpvOrthographe_txtMot").val(this._termesEnCours[i]);
+			}
+		}
+	} else {
+		
+	}
+	
+	parler($("#EpvOrthographe_txtMot").val());
+	$("#txtSaisie").focus();
+};
+
+EpvOrthographe.prototype.validerReponse = function() {
+	return $("#EpvOrthographe_txtMot").val().toLowerCase() === $("#EpvOrthographe_txtSaisie").val().toLowerCase();
+};
+
+EpvOrthographe.prototype.ajouterPanneauConfiguration = function(id) {
+	$(id).append('	<div id="EpvOrthographe_Configuration">' +
+				'		<h2>Orthographe</h2>' +
+				'		<div id="listes-mots">' +
+				'			<div id="listes-mots-ajouter">' +
+				'				Nouvelle liste :' +
+				'				<input type="text" id="txtNouvelleListe" />' +
+				'				<div id="ajouter-liste" />' +
+				'			</div>' +
+				'		</div>' +
+				'	</div>');
+
+	this._listesMots.forEach(function(liste) {
+		ajouterListe(liste.nom, liste.active);
+
+		liste.termes.forEach(function(terme){
+			ajouterMot(liste.nom, terme);
+		});
+	});
+
+	$("#ajouter-liste").click(function() {
+		var nomListe = $("#txtNouvelleListe").val();
+		ajouterListe(nomListe, true);
+		selectionnerNouveauMot(nomListe);
+	});
+	
+	$("#txtNouvelleListe").keyup(function(event){
+		if (event.keyCode == 13) {
+			var nomListe = $("#txtNouvelleListe").val();
+			ajouterListe(nomListe, true);
+			selectionnerNouveauMot(nomListe);
+		}
+	});
+	
+	$("#supprimer-liste").click(function(event) {
+		$liste = event.target.parent();
+		$liste.remove();
+	});
+	
 	/*
 		Recherche une liste par son nom et retourne l'objet jquery correspondant le cas échéant ou null
 	*/
@@ -130,14 +154,14 @@ function EpvOrthographe(parametres, validationCallback) {
 		
 		return liste.length == 0 ? null : liste;
 	}
-
+	
 	/*
 		Efface les listes de mots de l'écran des paramètres.
 	*/
 	function effacerListes() {
 		$("#listes-mots .liste-mots-liste").remove();
 	}
-
+	
 	/*
 		Ajoute une nouvelle liste de mots.
 	*/
@@ -188,11 +212,11 @@ function EpvOrthographe(parametres, validationCallback) {
 				$(event.target).val("");
 			}
 		});
-
+	
 		
 		$("#txtNouvelleListe").val('');
 	}
-
+	
 	/*
 		Recherche un mot dans une liste et retourne l'objet jquery correspondant le cas échéant ou null
 		Paramètres
@@ -204,7 +228,7 @@ function EpvOrthographe(parametres, validationCallback) {
 		
 		return obj.length == 0 ? null : obj;
 	}
-
+	
 	/*
 		Ajoute un mot à une liste.
 		
@@ -237,46 +261,6 @@ function EpvOrthographe(parametres, validationCallback) {
 		});
 	}
 
-	this.ajouterPanneauConfiguration = function(id) {
-		$(id).append('	<div id="EpvOrthographe_Configuration">' +
-					'		<h2>Orthographe</h2>' +
-					'		<div id="listes-mots">' +
-					'			<div id="listes-mots-ajouter">' +
-					'				Nouvelle liste :' +
-					'				<input type="text" id="txtNouvelleListe" />' +
-					'				<div id="ajouter-liste" />' +
-					'			</div>' +
-					'		</div>' +
-					'	</div>');
-
-		_listesMots.forEach(function(liste) {
-			ajouterListe(liste.nom, liste.active);
-
-			liste.termes.forEach(function(terme){
-				ajouterMot(liste.nom, terme);
-			});
-		});
-
-		$("#ajouter-liste").click(function() {
-			var nomListe = $("#txtNouvelleListe").val();
-			ajouterListe(nomListe, true);
-			selectionnerNouveauMot(nomListe);
-		});
-		
-		$("#txtNouvelleListe").keyup(function(event){
-			if (event.keyCode == 13) {
-				var nomListe = $("#txtNouvelleListe").val();
-				ajouterListe(nomListe, true);
-				selectionnerNouveauMot(nomListe);
-			}
-		});
-		
-		$("#supprimer-liste").click(function(event) {
-			$liste = event.target.parent();
-			$liste.remove();
-		});
-	};
-	
 	/*
 		Sélectionne la zone de saisie du nouveau mot de la liste.
 	*/
@@ -290,36 +274,38 @@ function EpvOrthographe(parametres, validationCallback) {
 			$(elementsListe[0].parentNode).find(".nouveau-mot").focus();
 		}
 	}
-	
-	/*
-		retourne les paramètres saisis dans le panneau de configuration de l'épreuve.
-	*/
-	this.parametresEpreuve = function() {
-		// Récupération des données dans le panneau de configuration
-		_listesMots = [];
-		$("#listes-mots .liste-mots-liste").each(function(index, liste){
-			var checkbox = $(liste).find(":input[type='checkbox']");
-			var nouvelleListe = {
-				'nom': checkbox.val(),
-				'termes': [],
-				'active': checkbox.is(':checked')
-			};
+};
 
-			$(liste).find(".liste-mots li").each(function(index, mot) {
-				nouvelleListe.termes.push($(mot).attr('value'));
-			});
-			_listesMots.push(nouvelleListe);
+/*
+	retourne les paramètres saisis dans le panneau de configuration de l'épreuve.
+*/
+EpvOrthographe.prototype.parametresEpreuve = function() {
+	var that = this;
+	
+	// Récupération des données dans le panneau de configuration
+	that._listesMots = [];
+	$("#listes-mots .liste-mots-liste").each(function(index, liste){
+		var checkbox = $(liste).find(":input[type='checkbox']");
+		var nouvelleListe = {
+			'nom': checkbox.val(),
+			'termes': [],
+			'active': checkbox.is(':checked')
+		};
+
+		$(liste).find(".liste-mots li").each(function(index, mot) {
+			nouvelleListe.termes.push($(mot).attr('value'));
 		});
-		
-		_termesEnCours	= getTermes(_listesMots);
-		
-		return 	{
-					"nom": _nomEpreuve,
-					"parametres": {
-						"listes": _listesMots
-					},
-					"historique": {
-					}
-				};
-	};
-}
+		that._listesMots.push(nouvelleListe);
+	});
+	
+	that._termesEnCours	= that.getTermes(that._listesMots);
+	
+	return 	{
+				"nom": that.NomEpreuve,
+				"parametres": {
+					"listes": that._listesMots
+				},
+				"historique": {
+				}
+			};
+};	
