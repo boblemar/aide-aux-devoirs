@@ -15,28 +15,32 @@
 		<script src="javascript/parametres.js"></script>
 	</head>
 	<body>
-		<div id="menu">
-			<a id="epreuve-addition" href="#">Addition</a>
-			<a id="epreuve-addition-a-trous" href="#">Addition &agrave; trous</a>
-			<a id="epreuve-orthographe" href="#">Orthographe</a>
-		</div>
 		<div id="jeu">
+			<div id="menu">
+				<a id="epreuve-addition" href="#">Addition</a>
+				<a id="epreuve-addition-a-trous" href="#">Addition &agrave; trous</a>
+				<a id="epreuve-orthographe" href="#">Orthographe</a>
+			</div>
 			<div id="question">
-				<div id="epreuve">
-				</div>
-				<div id="resultat">
-					<input id="inputResultat" type="hidden" />
-					<div id="resultat-bon">Bonne r&eacute;ponse !</div>
-					<div id="resultat-mauvais">Mauvaise r&eacute;ponse</div>
+				<div class="cadre">
+					<div id="epreuve">
+					</div>
+					<div id="resultat">
+						<input id="inputResultat" type="hidden" />
+						<div id="resultat-bon">Bonne r&eacute;ponse !</div>
+						<div id="resultat-mauvais">Mauvaise r&eacute;ponse</div>
+					</div>
 				</div>
 			</div>
 			<div id="score">
-				<h1>Score</h1>
-				<div>
-					<div id="score-bon">0</div>
-					<div id="score-mauvais">0</div>
+				<div class="cadre">
+					<h1>Score</h1>
+					<div>
+						<div id="score-bon">0</div>
+						<div id="score-mauvais">0</div>
+					</div>
+					<a id="lnkOuvrirParametres" href="#">Param&egrave;tres</a>
 				</div>
-				<a id="lnkOuvrirParametres" href="#">Param&egrave;tres</a>
 			</div>
 		</div>
 		<div id="parametres">
