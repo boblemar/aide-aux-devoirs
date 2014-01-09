@@ -14,7 +14,7 @@
 				verbose="yes"
 				remotedir="/public_html/aide-aux-devoirs-test">
 			<fileset	dir=".">
-				<modified />
+				
 			</fileset>
 		</ftp>
 		<echo>Fin de la publication</echo>

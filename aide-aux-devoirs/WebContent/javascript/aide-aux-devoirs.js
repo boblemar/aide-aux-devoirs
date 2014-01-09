@@ -1,11 +1,12 @@
 
 var epreuve 		= "addition à trous";
 var epreuveEnCours	= null;
-var nomJoueur 		= "Léandre";
+var nomJoueur 		= "test";
 var listeMots 		= 'liste 1';
 var syntheseVocale	= new SyntheseVocale();
 
 var epreuves 		= [];
+
 
 var definitionEpreuves = [ {
 							"nom": "addition",
@@ -26,7 +27,7 @@ var definitionEpreuves = [ {
 							"script": "orthographe.js"
 						}
 					];
-		
+
 $(document).ready(function() {
 
 	$("#validation").click(validation);
@@ -53,6 +54,9 @@ $(document).ready(function() {
 		for (nomEpreuve in epreuves) {
 			epreuves[nomEpreuve].ajouterPanneauConfiguration("#parametres-contenu");
 		}
+				
+		$("#parametres-contenu").accordion({	header: "> div > h2",
+												heightStyle: "fill"});
 		
 		panelParametres.css({top: panelJeu.position().top, left: panelJeu.position().left});
 		panelParametres.height(panelJeu.height());

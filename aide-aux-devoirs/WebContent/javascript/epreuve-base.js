@@ -50,11 +50,9 @@ EpvBaseClass.prototype.validerReponse = function() {};
 
 /*
  * Description
- * 		Ajoute le panneau de configuration correspondant à l'épreuve.
- * Paramètres
- * 		id :	Identifiant du div dans lequel ajouter le panneau.
+ * 		Construit le panneau de configuration correspondant à l'épreuve.
  */
-EpvBaseClass.prototype.ajouterPanneauConfiguration = function(id) {};
+EpvBaseClass.prototype.construirePanneauConfiguration = function() {};
 
 /*
  * Description
