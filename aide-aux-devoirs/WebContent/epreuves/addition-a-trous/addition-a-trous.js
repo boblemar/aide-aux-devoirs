@@ -237,13 +237,12 @@ EpvAdditionATrous.prototype.validerReponse = function() {
 	
 /*
  * Description
- * 		Ajoute le panneau de configuration correspondant à l'épreuve.
- * Paramètres
- * 		id :	Identifiant du div dans lequel ajouter le panneau.
+ * 		Construit le panneau de configuration correspondant à l'épreuve.
+ * Valeur de retour
+ * 		L'objet jquery contenant le panneau.
  */
-EpvAdditionATrous.prototype.ajouterPanneauConfiguration = function(id) {
-	$(id).append('	<div id="EpvAdditionATrous_Configuration">' +
-				'		<h2>Addition &agrave; trous</h2>' +
+EpvAdditionATrous.prototype.construirePanneauConfiguration = function() {
+	return $('	<div id="EpvAdditionATrous_Configuration">' +
 				'		Longueur des op&eacute;randes : ' +
 				'		<input type="number" id="EpvAdditionATrous_Configuration_NbOperandes" value="' + _tailleOperandes + '" />' +
 				'	</div>');

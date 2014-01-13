@@ -52,16 +52,20 @@ $(document).ready(function() {
 		$("#parametres-contenu").html("");
 		
 		for (nomEpreuve in epreuves) {
-			epreuves[nomEpreuve].ajouterPanneauConfiguration("#parametres-contenu");
+			$("#parametres-contenu")
+				.append('<h3>' + nomEpreuve + '</h3>')
+				.append(epreuves[nomEpreuve].construirePanneauConfiguration());
 		}
-				
-		$("#parametres-contenu").accordion({	header: "> div > h2",
-												heightStyle: "fill"});
-		
+
+		$("#parametres-contenu").accordion({heightStyle: "fill" });
+	
 		panelParametres.css({top: panelJeu.position().top, left: panelJeu.position().left});
 		panelParametres.height(panelJeu.height());
+		panelParametres.width(panelJeu.width());
 		
 		$("#parametres").fadeIn();
+		
+		$("#parametres-contenu").accordion('refresh');
 	});
 
 	$("#lnkFermerParametres").click(function() {

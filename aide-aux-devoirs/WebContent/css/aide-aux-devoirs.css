@@ -85,15 +85,6 @@ h1 {
 	display: none;
 }
 
-#parametres {
-	display: none;
-	position: absolute;
-	border-radius: 1em;
-	padding: 1em;
-	background-color: grey;
-	border: 2px black solid;
-}
-
 #menu {
 	margin: 1em;
 	height: 1em;
@@ -105,4 +96,14 @@ h1 {
 	color: white;
 	border-radius: 1em;
 	padding: 0.3em;
+}
+
+#parametres {
+	display: none;
+	position: absolute;
+	border-radius: 1em;
+	padding: 1em;
+	background-color: grey;
+	border: 2px black solid;
+	font-size: small;
 }

@@ -107,127 +107,123 @@ EpvOrthographe.prototype.validerReponse = function() {
 	return $("#EpvOrthographe_txtMot").val().toLowerCase() === $("#EpvOrthographe_txtSaisie").val().toLowerCase();
 };
 
-EpvOrthographe.prototype.ajouterPanneauConfiguration = function(id) {
-	$(id).append('	<div id="EpvOrthographe_Configuration">' +
-				'		<h2>Orthographe</h2>' +
-				'		<div id="listes-mots">' +
-				'			<div id="listes-mots-ajouter">' +
-				'				Nouvelle liste :' +
-				'				<input type="text" id="txtNouvelleListe" />' +
-				'				<div id="ajouter-liste" />' +
-				'			</div>' +
-				'		</div>' +
-				'	</div>');
+/*
+ * Description
+ * 		Construit le panneau de configuration correspondant à l'épreuve.
+ * Valeur de retour
+ * 		L'objet jquery contenant le panneau.
+ */
+EpvOrthographe.prototype.construirePanneauConfiguration = function() {
+	var panneau 		= $('<div id="EpvOrthographe_Configuration" />');
+	var listesMots		= $('<div id="listes-mots" />').appendTo(panneau);
+	var listeAAjouter	= $('<div id="listes-mots-ajouter">' +
+							'	Nouvelle liste :' +
+							'</div>').appendTo(listeMots);
+	
+	// ListeMots
+	function rechercherListe(listesMots, nomListe) {
+		var liste = listesMots.find(":input[type='checkbox'][value=\"" + nomListe + "\"]");
+		
+		return liste.length == 0 ? null : liste;
+	};
 
+	function ajouterListe(listesMots, nomListe, active) {
+		if (nomListe === '') {
+			return;
+		}
+		
+		if (this.rechercherListe(nomListe)) {
+			// la liste existe déjà
+			return;
+		}
+		
+		var nouvelleListe 	= $('<div />')
+								.class(liste-mots-liste)
+								.append('<input type="checkbox" value="' + nomListe + '"' + (active ? ' checked ' : '') + '>' + nomListe + '</input>');
+
+		var supprimerListe	= $('<div />')
+								.class(supprimer-liste)
+								.click(function(event) {
+									var liste = event.target.parentNode;
+									liste.remove();})
+								.appendTo(nouvelleListe);
+		
+		var listeMots		= $('<div>Nouveau mot :</div>')
+								.class('liste-mots')
+								.appendTo(nouvelleListe);
+		
+		var nouveauMot		= $('<input />')
+								.type('text')
+								.class('nouveau-mot')
+								.keyup(function(event){
+									if (event.keyCode == 13) {
+										var listeMots 	= $(event.target.parentNode);
+										var mot 		= $(event.target).val();
+										var nomListe 	= listeMots.siblings(":input[type='checkbox']").val();
+										
+										ajouterMot(nomListe, mot);
+										
+										$(event.target).val("");
+									}})
+								.appendTo(listeMots);
+
+		var ajouterMot		= $('<div />')
+								.class('ajouter-mot')
+								.click(function(event) {
+									var listeMots 	= $(event.target.parentNode);
+									var elementMot	= listeMots.find(".nouveau-mot");
+									var mot 		= elementMot.val();
+									var nomListe 	= listeMots.siblings(":input[type='checkbox']").val();
+									
+									ajouterMot(nomListe, mot);
+									
+									elementMot.val("");})
+								.appendTo(nouelleListe);
+
+		function rechercherMot(listeMots, mot) {
+			var obj = listeMots.siblings(".liste-mots").find("li[value=\"" + mot + "\"]");
+			
+			return obj.length == 0 ? null : obj;
+		};
+		
+		$("#txtNouvelleListe").val('');
+		
+		listesMots.append(nouvelleListe);
+	};
+	
+	// Texte de saisie d'une nouvelle liste
+	$('<input type="text" id="txtNouvelleListe" />')
+		.keyup(function(event){
+				if (event.keyCode == 13) {
+					var nomListe = $("#txtNouvelleListe").val();
+					listeMots.ajouterListe(nomListe, true);
+					selectionnerNouveauMot(nomListe);
+				}
+			})
+		.appendTo(listeAAjouter);
+	
+	// Bouton nouvelle liste
+	$('<div id="ajouter-liste" />')
+		.click(function() {
+			var nomListe = $("#txtNouvelleListe").val();
+			listeMots.ajouterListe(nomListe, true);
+			selectionnerNouveauMot(nomListe);
+		})
+		.appendTo(listeAAjouter);
+
+	// Ajotu des listes existantes
 	this._listesMots.forEach(function(liste) {
-		ajouterListe(liste.nom, liste.active);
+		ajouterListe(listesMots, liste.nom, liste.active);
 
 		liste.termes.forEach(function(terme){
 			ajouterMot(liste.nom, terme);
 		});
-	});
-
-	$("#ajouter-liste").click(function() {
-		var nomListe = $("#txtNouvelleListe").val();
-		ajouterListe(nomListe, true);
-		selectionnerNouveauMot(nomListe);
-	});
-	
-	$("#txtNouvelleListe").keyup(function(event){
-		if (event.keyCode == 13) {
-			var nomListe = $("#txtNouvelleListe").val();
-			ajouterListe(nomListe, true);
-			selectionnerNouveauMot(nomListe);
-		}
 	});
 	
 	$("#supprimer-liste").click(function(event) {
 		$liste = event.target.parent();
 		$liste.remove();
 	});
-	
-	/*
-		Recherche une liste par son nom et retourne l'objet jquery correspondant le cas échéant ou null
-	*/
-	function rechercherListe(nomListe) {
-		var liste = $("#listes-mots :input[type='checkbox'][value=\"" + nomListe + "\"]");
-		
-		return liste.length == 0 ? null : liste;
-	}
-	
-	/*
-		Efface les listes de mots de l'écran des paramètres.
-	*/
-	function effacerListes() {
-		$("#listes-mots .liste-mots-liste").remove();
-	}
-	
-	/*
-		Ajoute une nouvelle liste de mots.
-	*/
-	function ajouterListe(nomListe, active) {
-		if (nomListe === '') {
-			return;
-		}
-		
-		if (rechercherListe(nomListe)) {
-			// la liste existe déjà
-			return;
-		}
-		
-		$("#listes-mots").append("<div class='liste-mots-liste'>" +
-									"<input type='checkbox' value='" + nomListe + "'" + (active ? " checked " : "") + "'>" + nomListe + "</input>" +
-									"<div class='supprimer-liste'></div>" +
-									"<div class='liste-mots'>" +
-										"Nouveau mot :" +
-										"<input type='text' class='nouveau-mot' />" +
-										"<div class='ajouter-mot'></div>" +
-									"</div>" +
-								"</div>");
-								
-		$("#listes-mots .supprimer-liste").click(function(event) {
-			var liste = event.target.parentNode;
-			liste.remove();
-		});
-		
-		$("#listes-mots .ajouter-mot").click(function(event) {
-			var listeMots 	= $(event.target.parentNode);
-			var elementMot	= listeMots.find(".nouveau-mot");
-			var mot 		= elementMot.val();
-			var nomListe 	= listeMots.siblings(":input[type='checkbox']").val();
-			
-			ajouterMot(nomListe, mot);
-			
-			elementMot.val("");
-		});
-		
-		$("#listes-mots .nouveau-mot").keyup(function(event){
-			if (event.keyCode == 13) {
-				var listeMots 	= $(event.target.parentNode);
-				var mot 		= $(event.target).val();
-				var nomListe 	= listeMots.siblings(":input[type='checkbox']").val();
-				
-				ajouterMot(nomListe, mot);
-				
-				$(event.target).val("");
-			}
-		});
-	
-		
-		$("#txtNouvelleListe").val('');
-	}
-	
-	/*
-		Recherche un mot dans une liste et retourne l'objet jquery correspondant le cas échéant ou null
-		Paramètres
-			liste:		l'objet JQuery correspondant à la liste.
-			mot:		le mot à rechercher.
-	*/
-	function rechercherMot(liste, mot) {
-		var obj = liste.siblings(".liste-mots").find("li[value=\"" + mot + "\"]");
-		
-		return obj.length == 0 ? null : obj;
-	}
 	
 	/*
 		Ajoute un mot à une liste.
@@ -274,6 +270,8 @@ EpvOrthographe.prototype.ajouterPanneauConfiguration = function(id) {
 			$(elementsListe[0].parentNode).find(".nouveau-mot").focus();
 		}
 	}
+	
+	return panneau;
 };
 
 /*

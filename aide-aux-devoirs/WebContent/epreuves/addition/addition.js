@@ -98,13 +98,20 @@ EpvAddition.prototype.validerReponse = function() {
  * Paramètres
  * 		id :	Identifiant du div dans lequel ajouter le panneau.
  */
-EpvAddition.prototype.ajouterPanneauConfiguration = function(id) {
-	$(id).append('	<div id="EpvAddition_Configuration">' +
-				'		<h2>Addition</h2>' +
-				'		Maximum op&eacute;rande 1 : ' +
-				'		<input type="number" id="EpvAddition_Configuration_MaxOperande1" value="' + this._plageOperande1 + '" />' +
-				'		Maximum op&eacute;rande 2 : ' +
-				'		<input type="number" id="EpvAddition_Configuration_MaxOperande2" value="' + this._plageOperande2 + '" />' +
+EpvAddition.prototype.construirePanneauConfiguration = function() {
+	return $('	<div id="EpvAddition_Configuration">' +
+				'	<table>' +
+				'		<tbody>' +
+				'			<tr>' +
+				'				<td>Maximum op&eacute;rande 1 : </td>' +
+				'				<td><input type="number" id="EpvAddition_Configuration_MaxOperande1" value="' + this._plageOperande1 + '" /></td>' +
+				'			</tr>' +
+				'			<tr>' +
+				'				<td>Maximum op&eacute;rande 2 : </td>' +
+				'				<td><input type="number" id="EpvAddition_Configuration_MaxOperande2" value="' + this._plageOperande2 + '" /></td>' +
+				'			</tr>' +
+				'		</tbody>' +
+				'	</table>' +
 				'	</div>');
 };
 
