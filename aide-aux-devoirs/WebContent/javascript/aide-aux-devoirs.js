@@ -1,7 +1,8 @@
 
 var epreuve 		= "addition à trous";
 var epreuveEnCours	= null;
-var nomJoueur 		= "test";
+//var nomJoueur 		= "test";
+var nomJoueur 		= "Léandre";
 var listeMots 		= 'liste 1';
 var syntheseVocale	= new SyntheseVocale();
 

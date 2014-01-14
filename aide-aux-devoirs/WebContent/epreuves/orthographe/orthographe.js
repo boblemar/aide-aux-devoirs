@@ -120,7 +120,7 @@ EpvOrthographe.prototype.construirePanneauConfiguration = function() {
 							'	Nouvelle liste :' +
 							'</div>').appendTo(listesMots);
 	
-	function ajouterListe(listesMots, nomListe, active) {
+	function ajouterListe(listesMots, nomListe, active, contractee) {
 		if (nomListe === '') {
 			return;
 		}
@@ -134,6 +134,24 @@ EpvOrthographe.prototype.construirePanneauConfiguration = function() {
 								.addClass('liste-mots-liste')
 								.append('<input type="checkbox" value="' + nomListe + '"' + (active ? ' checked ' : '') + '>' + nomListe + '</input>');
 
+		var boutonAffichageListe	= $('<div />')
+										.click(function() {
+											if ($(this).hasClass('affichage-liste-contractee')) {
+												$(this).removeClass('affichage-liste-contractee')
+														.addClass('affichage-liste-etendue');
+												
+												// on affiche la liste
+												listeMots.slideDown();
+											} else {
+												$(this).removeClass('affichage-liste-etendue')
+												.addClass('affichage-liste-contractee');
+												
+												// on masque la liste
+												listeMots.slideUp();
+											}
+										})
+										.appendTo(nouvelleListe);
+
 		var supprimerListe	= $('<div />')
 								.addClass('supprimer-liste')
 								.click(function(event) {
@@ -144,6 +162,14 @@ EpvOrthographe.prototype.construirePanneauConfiguration = function() {
 		var listeMots		= $('<div>Nouveau mot :</div>')
 								.addClass('liste-mots')
 								.appendTo(nouvelleListe);
+		
+		if (contractee) {
+			listeMots.hide();
+			boutonAffichageListe.addClass('affichage-liste-contractee');
+		} else {
+			listeMots.show();
+			boutonAffichageListe.addClass('affichage-liste-etendue');			
+		}
 		
 		var nouveauMot		= $('<input />')
 								.attr('type', 'text')
@@ -183,7 +209,7 @@ EpvOrthographe.prototype.construirePanneauConfiguration = function() {
 		.keyup(function(event){
 				if (event.keyCode == 13) {
 					var nomListe = $("#txtNouvelleListe").val();
-					ajouterListe(listesMots, nomListe, true);
+					ajouterListe(listesMots, nomListe, true, false);
 					selectionnerNouveauMot(listesMots, nomListe);
 				}
 			})
@@ -193,14 +219,14 @@ EpvOrthographe.prototype.construirePanneauConfiguration = function() {
 	$('<div id="ajouter-liste" />')
 		.click(function() {
 			var nomListe = $("#txtNouvelleListe").val();
-			ajouterListe(listesMots, nomListe, true);
+			ajouterListe(listesMots, nomListe, true, false);
 			selectionnerNouveauMot(nomListe);
 		})
 		.appendTo(listeAAjouter);
 
 	// Ajotu des listes existantes
 	this._listesMots.forEach(function(liste) {
-		ajouterListe(listesMots, liste.nom, liste.active);
+		ajouterListe(listesMots, liste.nom, liste.active, true);
 
 		liste.termes.forEach(function(terme){
 			ajouterMotDansListe(listesMots, liste.nom, terme);
