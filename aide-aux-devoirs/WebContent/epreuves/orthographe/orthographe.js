@@ -118,73 +118,60 @@ EpvOrthographe.prototype.construirePanneauConfiguration = function() {
 	var listesMots		= $('<div id="listes-mots" />').appendTo(panneau);
 	var listeAAjouter	= $('<div id="listes-mots-ajouter">' +
 							'	Nouvelle liste :' +
-							'</div>').appendTo(listeMots);
+							'</div>').appendTo(listesMots);
 	
-	// ListeMots
-	function rechercherListe(listesMots, nomListe) {
-		var liste = listesMots.find(":input[type='checkbox'][value=\"" + nomListe + "\"]");
-		
-		return liste.length == 0 ? null : liste;
-	};
-
 	function ajouterListe(listesMots, nomListe, active) {
 		if (nomListe === '') {
 			return;
 		}
 		
-		if (this.rechercherListe(nomListe)) {
+		if (rechercherListe(listesMots, nomListe)) {
 			// la liste existe déjà
 			return;
 		}
 		
 		var nouvelleListe 	= $('<div />')
-								.class(liste-mots-liste)
+								.addClass('liste-mots-liste')
 								.append('<input type="checkbox" value="' + nomListe + '"' + (active ? ' checked ' : '') + '>' + nomListe + '</input>');
 
 		var supprimerListe	= $('<div />')
-								.class(supprimer-liste)
+								.addClass('supprimer-liste')
 								.click(function(event) {
 									var liste = event.target.parentNode;
 									liste.remove();})
 								.appendTo(nouvelleListe);
 		
 		var listeMots		= $('<div>Nouveau mot :</div>')
-								.class('liste-mots')
+								.addClass('liste-mots')
 								.appendTo(nouvelleListe);
 		
 		var nouveauMot		= $('<input />')
-								.type('text')
-								.class('nouveau-mot')
+								.attr('type', 'text')
+								.addClass('nouveau-mot')
 								.keyup(function(event){
 									if (event.keyCode == 13) {
 										var listeMots 	= $(event.target.parentNode);
 										var mot 		= $(event.target).val();
 										var nomListe 	= listeMots.siblings(":input[type='checkbox']").val();
 										
-										ajouterMot(nomListe, mot);
+										ajouterMotDansListe(listesMots, nomListe, mot);
 										
 										$(event.target).val("");
 									}})
 								.appendTo(listeMots);
 
 		var ajouterMot		= $('<div />')
-								.class('ajouter-mot')
+								.addClass('ajouter-mot')
 								.click(function(event) {
 									var listeMots 	= $(event.target.parentNode);
 									var elementMot	= listeMots.find(".nouveau-mot");
 									var mot 		= elementMot.val();
 									var nomListe 	= listeMots.siblings(":input[type='checkbox']").val();
 									
-									ajouterMot(nomListe, mot);
+									ajouterMotDansListe(listesMots, nomListe, mot);
 									
 									elementMot.val("");})
-								.appendTo(nouelleListe);
-
-		function rechercherMot(listeMots, mot) {
-			var obj = listeMots.siblings(".liste-mots").find("li[value=\"" + mot + "\"]");
-			
-			return obj.length == 0 ? null : obj;
-		};
+								.appendTo(listeMots);
 		
 		$("#txtNouvelleListe").val('');
 		
@@ -196,8 +183,8 @@ EpvOrthographe.prototype.construirePanneauConfiguration = function() {
 		.keyup(function(event){
 				if (event.keyCode == 13) {
 					var nomListe = $("#txtNouvelleListe").val();
-					listeMots.ajouterListe(nomListe, true);
-					selectionnerNouveauMot(nomListe);
+					ajouterListe(listesMots, nomListe, true);
+					selectionnerNouveauMot(listesMots, nomListe);
 				}
 			})
 		.appendTo(listeAAjouter);
@@ -206,7 +193,7 @@ EpvOrthographe.prototype.construirePanneauConfiguration = function() {
 	$('<div id="ajouter-liste" />')
 		.click(function() {
 			var nomListe = $("#txtNouvelleListe").val();
-			listeMots.ajouterListe(nomListe, true);
+			ajouterListe(listesMots, nomListe, true);
 			selectionnerNouveauMot(nomListe);
 		})
 		.appendTo(listeAAjouter);
@@ -216,7 +203,7 @@ EpvOrthographe.prototype.construirePanneauConfiguration = function() {
 		ajouterListe(listesMots, liste.nom, liste.active);
 
 		liste.termes.forEach(function(terme){
-			ajouterMot(liste.nom, terme);
+			ajouterMotDansListe(listesMots, liste.nom, terme);
 		});
 	});
 	
@@ -225,19 +212,45 @@ EpvOrthographe.prototype.construirePanneauConfiguration = function() {
 		$liste.remove();
 	});
 	
+	
+	/**
+	 * Recherche une liste de mots et retourne l'objet JQuery correspondant si trouvé.
+	 * @param listesMots	L'objet JQuery contenant les listes de mots.
+	 * @param nomListe		Le nom de la liste à chercher.
+	 * @returns				L'objet JQuery correspondant à la liste.
+	 */
+	function rechercherListe(listesMots, nomListe) {
+		var liste = listesMots.find(":input[type='checkbox'][value=\"" + nomListe + "\"]");
+		
+		return liste.length == 0 ? null : liste;
+	};
+
+	/**
+	 * Recherche un mot dans une liste
+	 * @param listeMots		L'objet JQuery représentant la liste dans laquelle rechercher le mot.
+	 * @param mot			Le mot à rechercher.
+	 * @returns				L'objet JQuery représentant le mot.
+	 */
+	function rechercherMot(listeMots, mot) {
+		var obj = listeMots.siblings(".liste-mots").find("li[value=\"" + mot + "\"]");
+		
+		return obj.length == 0 ? null : obj;
+	};
+	
 	/*
 		Ajoute un mot à une liste.
 		
 		Paramètres
+			listesMots:		l'objet Jquery cotenant les listes de mots.
 			nomListe:		nom de la liste dans laquelle ajouter.
 			mot:			mot à ajouter.
 	*/
-	function ajouterMot(nomListe, mot) {
+	function ajouterMotDansListe(listesMots, nomListe, mot) {
 		if (mot === '') {
 			return;
 		}
 		
-		var liste = rechercherListe(nomListe);
+		var liste = rechercherListe(listesMots, nomListe);
 		if (!liste) {
 			return;
 		}
@@ -260,8 +273,8 @@ EpvOrthographe.prototype.construirePanneauConfiguration = function() {
 	/*
 		Sélectionne la zone de saisie du nouveau mot de la liste.
 	*/
-	function selectionnerNouveauMot(nomListe) {
-		var elementsListe = rechercherListe(nomListe);
+	function selectionnerNouveauMot(listesMots, nomListe) {
+		var elementsListe = rechercherListe(listesMots, nomListe);
 		
 		if (
 				(elementsListe) &&

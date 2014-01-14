@@ -83,7 +83,7 @@ EpvAdditionATrous.prototype.initialiserEpreuve = function(id) {
 	
 	// Initialisation des événements
 	$("#EpvAdditionATrous_validation").click(function() {
-		that.ValidationCallback();
+		that.validationCallback();
 	}).keyup(function(event) {
 		$("#EpvAdditionATrous_Operande2_Colonne0").focus();
 	});
