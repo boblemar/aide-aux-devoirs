@@ -1,5 +1,5 @@
 
-var epreuve 		= "addition à trous";
+var epreuve 		= "orthographe";
 var epreuveEnCours	= null;
 //var nomJoueur 		= "test";
 var nomJoueur 		= "Léandre";

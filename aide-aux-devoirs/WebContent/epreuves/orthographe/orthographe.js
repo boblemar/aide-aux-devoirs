@@ -4,13 +4,18 @@
 function EpvOrthographe(parametres, validationCallback) {
 	EpvBaseClass.call(this, parametres, validationCallback);
 	
-	this.NomEpreuve				= 'orthographe';
-	this.CheminsCss				= ['css/orthographe.css'];
+	this.NomEpreuve						= 'orthographe';
+	this.CheminsCss						= ['css/orthographe.css'];
 	
-	var that					= this;
+	var that							= this;
 	
-	this._listesMots			= [];
-	this._termesEnCours			= [];
+	this._listesMots					= [];
+	
+	this._termesPartieEnCours			= [];
+	
+	this._nbEssais						= 3;
+	
+	this._nbEssaisRestantsPartieEnCours	= this._nbEssais;
 	
 	this.getTermes = function(listes)  {
 		var listesActives	= listes.filter(function(l) { return l.active; });
@@ -31,8 +36,8 @@ function EpvOrthographe(parametres, validationCallback) {
 	
 	function initialiserMembres(parametres) {
 		if (parametres) {
-			that._listesMots		= parametres.parametres.listes;
-			that._termesEnCours		= that.getTermes(that._listesMots);
+			that._listesMots					= parametres.parametres.listes;
+			that._termesPartieEnCours			= that.getTermes(that._listesMots);
 		}
 	}	
 }
@@ -60,7 +65,17 @@ EpvOrthographe.prototype.initialiserEpreuve = function(id) {
 				'	<input type="text" id="EpvOrthographe_txtSaisie" />' +
 				'	<input type="submit" id="EpvOrthographe_validation" value="OK" />' +
 				'</div>' +
-				'</h1>');
+				'<div id="EpvOrthographe_partieEnCours">' +
+				'	<h2>Partie en cours</h2>' +
+				'	Nombre de mots restants :'	+
+				'	<div id="EpvOthographe_nbRestants"></div>' +
+				'	<br />' +
+				'	<div id="EpvOrthographe_aide">' +
+				'	L\'orthographe correcte était : ' + '<div id="EpvOrthographe_ortographeDernierMot"></div>' + 
+				'	</div>' +
+				'</div>');
+	
+	this.rafraichirPartieEnCours();
 	
 	$("#EpvOrthographe_validation").click(function() {
 		that.validationCallback();
@@ -73,39 +88,92 @@ EpvOrthographe.prototype.initialiserEpreuve = function(id) {
 	});
 	
 	$("#EpvOrthographe_Repeter").click(function() {
-		that.genererQuestion(false);
+		parler($("#EpvOrthographe_txtMot").val());
 	});
 };
 
+/*
+ * Description
+ * 		Génère une question.
+ * Paramètres
+ * 		nouvelleQuestion:	Si false : réitère la question précédente.
+ * 							Si true : génère une nouvelle question.
+ * Remarques
+ * 		le paramètre nouvelleQuestion n'est pas utilisé dans cette épreuve.
+ * 		Le système passe à la question suivante automatiquement si la réponse est juste ou si le nombre d'essais est atteint.
+ */
 EpvOrthographe.prototype.genererQuestion = function(nouvelleQuestion) {
-	if (nouvelleQuestion) {
-		$("#EpvOrthographe_txtSaisie").val("");
-		var ancienMot = $("#EpvOrthographe_txtMot").val();
-		$("#EpvOrthographe_txtMot").val("");
-		$("#EpvOrthographe_txtSaisie").val("");
-		
-		if (this._termesEnCours.length > 0) {
-			$("#EpvOrthographe_txtMot").val(this._termesEnCours[0]);
-		} else {
-			alert("Aucun mot actif ! V&eacute;rifiez la configuration !");
-		}
+	// On recopie la liste de termes sélectionnés dans la liste de la partie
+	if (this._termesPartieEnCours.length === 0) {
+		alert("Fin de la partie !");
+		this._termesPartieEnCours = this.getTermes(this._listesMots);
+	}
+	
 
-		for (var i = 1 ; i < this._termesEnCours.length ; i++) {
-			if (ancienMot === this._termesEnCours[i-1]) {
-				$("#EpvOrthographe_txtMot").val(this._termesEnCours[i]);
-			}
-		}
+	$("#EpvOrthographe_txtSaisie").val("");
+	$("#EpvOrthographe_txtMot").val("");
+	$("#EpvOrthographe_txtSaisie").val("");
+	
+	if (this._termesPartieEnCours.length > 0) {
+		$("#EpvOrthographe_txtMot").val(this._termesPartieEnCours[0]);
 	} else {
-		
+		alert("Aucun mot actif ! V&eacute;rifiez la configuration !");
 	}
 	
 	parler($("#EpvOrthographe_txtMot").val());
 	$("#txtSaisie").focus();
 };
 
+/*
+ * Description
+ * 		Valide la réponse à la question en fonction des données fournies par le joueur.
+ * Valeur de Retour
+ * 		true :	La réponse est valide.
+ * 		false : La réponse est erronnée.
+ */
 EpvOrthographe.prototype.validerReponse = function() {
-	return $("#EpvOrthographe_txtMot").val().toLowerCase() === $("#EpvOrthographe_txtSaisie").val().toLowerCase();
+	var reponseJuste = $("#EpvOrthographe_txtMot").val().toLowerCase() === $("#EpvOrthographe_txtSaisie").val().toLowerCase();
+	
+	if (reponseJuste) {
+		// On enlève le mot de la liste
+		this._termesPartieEnCours.shift();
+		this._nbEssaisRestantsPartieEnCours = this._nbEssais;
+		$("#EpvOrthographe_ortographeDernierMot").text("");
+	} else {
+		this._nbEssaisRestantsPartieEnCours --;
+
+		if (this._nbEssaisRestantsPartieEnCours == 0) {
+			// On enlève le mot de la tête et on le replace à la fin
+			var motEnCours = this._termesPartieEnCours.shift();
+			this._termesPartieEnCours.push(motEnCours);
+			this._nbEssaisRestantsPartieEnCours = this._nbEssais;
+			
+			// On écrit l'orthographe correcte dans l'aide
+			$("#EpvOrthographe_ortographeDernierMot").text(motEnCours);
+		}
+	}
+	
+	this.rafraichirPartieEnCours();
+	
+	return reponseJuste;
 };
+
+/**
+ * Description
+ * 		Met à jour le panneau de l'épreuve en cours.
+ */
+EpvOrthographe.prototype.rafraichirPartieEnCours = function() {
+	var aideDernierMot = $("#EpvOrthographe_ortographeDernierMot").text();
+	
+	if (aideDernierMot === "") {
+		$("#EpvOrthographe_aide").fadeOut();
+	} else {
+		$("#EpvOrthographe_aide").fadeIn();
+	}
+	
+	// Affichage du nombre de mots restants
+	$("#EpvOthographe_nbRestants").text(this._termesPartieEnCours.length);
+}
 
 /*
  * Description
@@ -335,7 +403,7 @@ EpvOrthographe.prototype.parametresEpreuve = function() {
 		that._listesMots.push(nouvelleListe);
 	});
 	
-	that._termesEnCours	= that.getTermes(that._listesMots);
+	that._termesPartieEnCours = that.getTermes(that._listesMots);
 	
 	return 	{
 				"nom": that.NomEpreuve,
