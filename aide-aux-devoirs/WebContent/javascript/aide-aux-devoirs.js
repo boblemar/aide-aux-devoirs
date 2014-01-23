@@ -15,6 +15,12 @@ var definitionEpreuves = [ {
 							"chemin": "epreuves/addition/",
 							"script": "addition.js"
 						},
+						 {
+							"nom": "multiplication",
+							"classe": "EpvMultiplication",
+							"chemin": "epreuves/multiplication/",
+							"script": "multiplication.js"
+						},						
 						{
 							"nom": "addition à trous",
 							"classe": "EpvAdditionATrous",
@@ -35,6 +41,10 @@ $(document).ready(function() {
 
 	$("#epreuve-addition").click(function() {
 		selectionnerEpreuve('addition');
+	});
+	
+	$("#epreuve-multiplication").click(function() {
+		selectionnerEpreuve('multiplication');
 	});
 
 	$("#epreuve-addition-a-trous").click(function() {

@@ -1,16 +1,16 @@
 /*
  * Constructeur.
  */
-function EpvAddition(parametres, validationCallback) {
+function EpvMultiplication(parametres, validationCallback) {
 	EpvBaseClass.call(this, parametres, validationCallback);
-	
+
 	var that					= this;
 	
-	this.NomEpreuve				= 'addition';
+	this.NomEpreuve				= 'multiplication';
 	this.CheminsCss				= [];
 	
-	this._plageOperande1	= 10;
-	this._plageOperande2	= 10;
+	this._plageOperande1		= 10;
+	this._plageOperande2		= 10;
 
 	initialiserMembres(parametres);
 	
@@ -26,7 +26,7 @@ function EpvAddition(parametres, validationCallback) {
 }
 
 // Héritage du prototype de la classe mère.
-EpvAddition.prototype = new EpvBaseClass();
+EpvMultiplication.prototype = new EpvBaseClass();
 
 /*
  * Description
@@ -34,26 +34,26 @@ EpvAddition.prototype = new EpvBaseClass();
  * Paramètres
  * 		id:			L'identifiant du div acceuillant la représentation de l'épreuve.
  */
-EpvAddition.prototype.initialiserEpreuve = function(id) {
+EpvMultiplication.prototype.initialiserEpreuve = function(id) {
 	var that = this;
 	
 	$(id).html(	'<h1>Addition</h1>' +
-				'<div id="EpvAddition_Question">' +
+				'<div id="EpvMultiplication_Question">' +
 				'	Combien font' +
-				'	<input type="text" id="EpvAddition_txtQuestion" readonly="true" />' +
+				'	<input type="text" id="EpvMultiplication_txtQuestion" readonly="true" />' +
 				'</div>' +
-				'<div id="EpvAddition_saisie">' +
+				'<div id="EpvMultiplication_saisie">' +
 				'	R&eacute;ponse :' +
-				'	<input type="text" id="EpvAddition_txtSaisie" />' +
-				'	<input type="submit" id="EpvAddition_validation" value="OK" />' +
+				'	<input type="text" id="EpvMultiplication_txtSaisie" />' +
+				'	<input type="submit" id="EpvMultiplication_validation" value="OK" />' +
 				'</div>' +
 				'</h1>');
 	
-	$("#EpvAddition_validation").click(function() {
+	$("#EpvMultiplication_validation").click(function() {
 		that.validationCallback();
 	});
 
-	$("#EpvAddition_txtSaisie").keyup(function(event){
+	$("#EpvMultiplication_txtSaisie").keyup(function(event){
 		if (event.keyCode == 13) {
 			that.validationCallback();
 		}
@@ -67,19 +67,18 @@ EpvAddition.prototype.initialiserEpreuve = function(id) {
  * 		nouvelleQuestion:	Si false : réitère la question précédente.
  * 							Si true : génère une nouvelle question.
  */
-EpvAddition.prototype.genererQuestion = function(nouvelleQuestion) {
+EpvMultiplication.prototype.genererQuestion = function(nouvelleQuestion) {
 	if (!nouvelleQuestion)
 		return;
 
-	$("#EpvAddition_txtSaisie").val("");
-	$("#EpvAddition_txtQuestion").val("");
+	$("#EpvMultiplication_txtSaisie").val("");
+	$("#EpvMultiplication_txtQuestion").val("");
 
 	var operande1 = Math.floor((this._plageOperande1 + 1) * Math.random());
 	var operande2 = Math.floor((this._plageOperande2 + 1) * Math.random());
+	$("#EpvMultiplication_txtQuestion").val(operande1 + " * " + operande2);
 	
-	$("#EpvAddition_txtQuestion").val(operande1 + " + " + operande2);
-	
-	$("#EpvAddition_txtSaisie").focus();
+	$("#EpvMultiplication_txtSaisie").focus();
 };
 
 /*
@@ -89,8 +88,8 @@ EpvAddition.prototype.genererQuestion = function(nouvelleQuestion) {
  * 		true :	La réponse est valide.
  * 		false : La réponse est erronnée.
  */
-EpvAddition.prototype.validerReponse = function() {
-	return eval($("#EpvAddition_txtQuestion").val()) === eval($("#EpvAddition_txtSaisie").val());
+EpvMultiplication.prototype.validerReponse = function() {
+	return eval($("#EpvMultiplication_txtQuestion").val()) === eval($("#EpvMultiplication_txtSaisie").val());
 };
 
 /*
@@ -99,17 +98,17 @@ EpvAddition.prototype.validerReponse = function() {
  * Paramètres
  * 		id :	Identifiant du div dans lequel ajouter le panneau.
  */
-EpvAddition.prototype.construirePanneauConfiguration = function() {
-	return $('	<div id="EpvAddition_Configuration">' +
+EpvMultiplication.prototype.construirePanneauConfiguration = function() {
+	return $('	<div id="EpvMultiplication_Configuration">' +
 				'	<table>' +
 				'		<tbody>' +
 				'			<tr>' +
 				'				<td>Maximum op&eacute;rande 1 : </td>' +
-				'				<td><input type="number" id="EpvAddition_Configuration_MaxOperande1" value="' + this._plageOperande1 + '" /></td>' +
+				'				<td><input type="number" id="EpvMultiplication_Configuration_MaxOperande1" value="' + this._plageOperande1 + '" /></td>' +
 				'			</tr>' +
 				'			<tr>' +
 				'				<td>Maximum op&eacute;rande 2 : </td>' +
-				'				<td><input type="number" id="EpvAddition_Configuration_MaxOperande2" value="' + this._plageOperande2 + '" /></td>' +
+				'				<td><input type="number" id="EpvMultiplication_Configuration_MaxOperande2" value="' + this._plageOperande2 + '" /></td>' +
 				'			</tr>' +
 				'		</tbody>' +
 				'	</table>' +
@@ -120,10 +119,10 @@ EpvAddition.prototype.construirePanneauConfiguration = function() {
  * Description
  *		Retourne les paramètres saisis dans le panneau de configuration de l'épreuve.
  */
-EpvAddition.prototype.parametresEpreuve = function() {
+EpvMultiplication.prototype.parametresEpreuve = function() {
 	// Récupération des données dans le panneau de configuration
-	this._plageOperande1	= $("#EpvAddition_Configuration_MaxOperande1").val();
-	this._plageOperande2	= $("#EpvAddition_Configuration_MaxOperande2").val();
+	this._plageOperande1	= $("#EpvMultiplication_Configuration_MaxOperande1").val();
+	this._plageOperande2	= $("#EpvMultiplication_Configuration_MaxOperande2").val();
 	
 	return 	{
 				"nom": this.NomEpreuve,
