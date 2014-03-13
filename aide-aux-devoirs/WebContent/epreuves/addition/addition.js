@@ -9,18 +9,26 @@ function EpvAddition(parametres, validationCallback) {
 	this.NomEpreuve				= 'addition';
 	this.CheminsCss				= [];
 	
-	this._plageOperande1	= 10;
-	this._plageOperande2	= 10;
+	this._minOperande1	= 1;
+	this._maxOperande1	= 10;
+	this._minOperande2	= 1;
+	this._maxOperande2	= 10;
 
 	initialiserMembres(parametres);
 	
 	function initialiserMembres(parametres) {		
 		if (parametres) {
-			if (parametres.parametres.operande1_max)
-				that._plageOperande1 = parseInt(parametres.parametres.operande1_max);
+			if (parametres.parametres.operande1_min)
+				that._minOperande1 = parseInt(parametres.parametres.operande1_min);
 
+			if (parametres.parametres.operande1_max)
+				that._maxOperande1 = parseInt(parametres.parametres.operande1_max);
+
+			if (parametres.parametres.operande2_min)
+				that._minOperande2 = parseInt(parametres.parametres.operande2_min);
+			
 			if (parametres.parametres.operande2_max)
-				that._plageOperande2 = parseInt(parametres.parametres.operande2_max);
+				that._maxOperande2 = parseInt(parametres.parametres.operande2_max);
 		}
 	}
 }
@@ -54,7 +62,10 @@ EpvAddition.prototype.initialiserEpreuve = function(id) {
 	});
 
 	$("#EpvAddition_txtSaisie").keyup(function(event){
-		if (event.keyCode == 13) {
+		if (
+				(event.keyCode == 13) &&
+				($(this).val() != '')
+			) {
 			that.validationCallback();
 		}
 	});
@@ -74,8 +85,8 @@ EpvAddition.prototype.genererQuestion = function(nouvelleQuestion) {
 	$("#EpvAddition_txtSaisie").val("");
 	$("#EpvAddition_txtQuestion").val("");
 
-	var operande1 = Math.floor((this._plageOperande1 + 1) * Math.random());
-	var operande2 = Math.floor((this._plageOperande2 + 1) * Math.random());
+	var operande1 = Math.floor((this._maxOperande1 - this._minOperande1 + 1) * Math.random()) + this._minOperande1;
+	var operande2 = Math.floor((this._maxOperande2 - this._minOperande2 + 1) * Math.random()) + this._minOperande2;
 	
 	$("#EpvAddition_txtQuestion").val(operande1 + " + " + operande2);
 	
@@ -104,12 +115,20 @@ EpvAddition.prototype.construirePanneauConfiguration = function() {
 				'	<table>' +
 				'		<tbody>' +
 				'			<tr>' +
+				'				<td>Minimum op&eacute;rande 1 : </td>' +
+				'				<td><input type="number" id="EpvAddition_Configuration_MinOperande1" value="' + this._minOperande1 + '" /></td>' +
+				'			</tr>' +
+				'			<tr>' +
 				'				<td>Maximum op&eacute;rande 1 : </td>' +
-				'				<td><input type="number" id="EpvAddition_Configuration_MaxOperande1" value="' + this._plageOperande1 + '" /></td>' +
+				'				<td><input type="number" id="EpvAddition_Configuration_MaxOperande1" value="' + this._maxOperande1 + '" /></td>' +
+				'			</tr>' +
+				'			<tr>' +
+				'				<td>Minimum op&eacute;rande 2 : </td>' +
+				'				<td><input type="number" id="EpvAddition_Configuration_MinOperande2" value="' + this._minOperande2 + '" /></td>' +
 				'			</tr>' +
 				'			<tr>' +
 				'				<td>Maximum op&eacute;rande 2 : </td>' +
-				'				<td><input type="number" id="EpvAddition_Configuration_MaxOperande2" value="' + this._plageOperande2 + '" /></td>' +
+				'				<td><input type="number" id="EpvAddition_Configuration_MaxOperande2" value="' + this._maxOperande2 + '" /></td>' +
 				'			</tr>' +
 				'		</tbody>' +
 				'	</table>' +
@@ -122,14 +141,18 @@ EpvAddition.prototype.construirePanneauConfiguration = function() {
  */
 EpvAddition.prototype.parametresEpreuve = function() {
 	// Récupération des données dans le panneau de configuration
-	this._plageOperande1	= $("#EpvAddition_Configuration_MaxOperande1").val();
-	this._plageOperande2	= $("#EpvAddition_Configuration_MaxOperande2").val();
+	this._minOperande1	= parseInt($("#EpvAddition_Configuration_MinOperande1").val());
+	this._maxOperande1	= parseInt($("#EpvAddition_Configuration_MaxOperande1").val());
+	this._minOperande2	= parseInt($("#EpvAddition_Configuration_MinOperande2").val());
+	this._maxOperande2	= parseInt($("#EpvAddition_Configuration_MaxOperande2").val());
 	
 	return 	{
 				"nom": this.NomEpreuve,
 				"parametres": {
-					"operande1_max": this._plageOperande1,
-					"operande2_max": this._plageOperande2
+					"operande1_min": this._minOperande1,
+					"operande1_max": this._maxOperande1,
+					"operande2_min": this._minOperande2,
+					"operande2_max": this._maxOperande2
 				},
 				"historique": {
 				}

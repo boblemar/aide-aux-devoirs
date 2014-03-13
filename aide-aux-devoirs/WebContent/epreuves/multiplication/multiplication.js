@@ -8,19 +8,27 @@ function EpvMultiplication(parametres, validationCallback) {
 	
 	this.NomEpreuve				= 'multiplication';
 	this.CheminsCss				= [];
-	
-	this._plageOperande1		= 10;
-	this._plageOperande2		= 10;
+
+	this._minOperande1		= 0;
+	this._maxOperande1		= 10;
+	this._minOperande2		= 0;
+	this._maxOperande2		= 10;
 
 	initialiserMembres(parametres);
 	
 	function initialiserMembres(parametres) {		
 		if (parametres) {
+			if (parametres.parametres.operande1_min)
+				that._minOperande1 = parseInt(parametres.parametres.operande1_min);
+
 			if (parametres.parametres.operande1_max)
-				that._plageOperande1 = parseInt(parametres.parametres.operande1_max);
+				that._maxOperande1 = parseInt(parametres.parametres.operande1_max);
+
+			if (parametres.parametres.operande2_min)
+				that._minOperande2 = parseInt(parametres.parametres.operande2_min);
 
 			if (parametres.parametres.operande2_max)
-				that._plageOperande2 = parseInt(parametres.parametres.operande2_max);
+				that._maxOperande2 = parseInt(parametres.parametres.operande2_max);
 		}
 	}
 }
@@ -37,7 +45,7 @@ EpvMultiplication.prototype = new EpvBaseClass();
 EpvMultiplication.prototype.initialiserEpreuve = function(id) {
 	var that = this;
 	
-	$(id).html(	'<h1>Addition</h1>' +
+	$(id).html(	'<h1>Multiplication</h1>' +
 				'<div id="EpvMultiplication_Question">' +
 				'	Combien font' +
 				'	<input type="text" id="EpvMultiplication_txtQuestion" readonly="true" />' +
@@ -54,7 +62,10 @@ EpvMultiplication.prototype.initialiserEpreuve = function(id) {
 	});
 
 	$("#EpvMultiplication_txtSaisie").keyup(function(event){
-		if (event.keyCode == 13) {
+		if (
+				(event.keyCode == 13) &&
+				($(this).val() != '')
+			) {
 			that.validationCallback();
 		}
 	});
@@ -74,8 +85,8 @@ EpvMultiplication.prototype.genererQuestion = function(nouvelleQuestion) {
 	$("#EpvMultiplication_txtSaisie").val("");
 	$("#EpvMultiplication_txtQuestion").val("");
 
-	var operande1 = Math.floor((this._plageOperande1 + 1) * Math.random());
-	var operande2 = Math.floor((this._plageOperande2 + 1) * Math.random());
+	var operande1 = Math.floor((this._maxOperande1 - this._minOperande1 + 1) * Math.random()) + this._minOperande1;
+	var operande2 = Math.floor((this._maxOperande2 - this._minOperande2 + 1) * Math.random()) + this._minOperande2;
 	$("#EpvMultiplication_txtQuestion").val(operande1 + " * " + operande2);
 	
 	$("#EpvMultiplication_txtSaisie").focus();
@@ -103,12 +114,20 @@ EpvMultiplication.prototype.construirePanneauConfiguration = function() {
 				'	<table>' +
 				'		<tbody>' +
 				'			<tr>' +
+				'				<td>Minimum op&eacute;rande 1 : </td>' +
+				'				<td><input type="number" id="EpvMultiplication_Configuration_MinOperande1" value="' + this._minOperande1 + '" /></td>' +
+				'			</tr>' +
+				'			<tr>' +
 				'				<td>Maximum op&eacute;rande 1 : </td>' +
-				'				<td><input type="number" id="EpvMultiplication_Configuration_MaxOperande1" value="' + this._plageOperande1 + '" /></td>' +
+				'				<td><input type="number" id="EpvMultiplication_Configuration_MaxOperande1" value="' + this._maxOperande1 + '" /></td>' +
+				'			</tr>' +
+				'			<tr>' +
+				'				<td>Minimum op&eacute;rande 2 : </td>' +
+				'				<td><input type="number" id="EpvMultiplication_Configuration_MinOperande2" value="' + this._minOperande2 + '" /></td>' +
 				'			</tr>' +
 				'			<tr>' +
 				'				<td>Maximum op&eacute;rande 2 : </td>' +
-				'				<td><input type="number" id="EpvMultiplication_Configuration_MaxOperande2" value="' + this._plageOperande2 + '" /></td>' +
+				'				<td><input type="number" id="EpvMultiplication_Configuration_MaxOperande2" value="' + this._maxOperande2 + '" /></td>' +
 				'			</tr>' +
 				'		</tbody>' +
 				'	</table>' +
@@ -121,14 +140,18 @@ EpvMultiplication.prototype.construirePanneauConfiguration = function() {
  */
 EpvMultiplication.prototype.parametresEpreuve = function() {
 	// Récupération des données dans le panneau de configuration
-	this._plageOperande1	= $("#EpvMultiplication_Configuration_MaxOperande1").val();
-	this._plageOperande2	= $("#EpvMultiplication_Configuration_MaxOperande2").val();
+	this._minOperande1	= parseInt($("#EpvMultiplication_Configuration_MinOperande1").val());
+	this._maxOperande1	= parseInt($("#EpvMultiplication_Configuration_MaxOperande1").val());
+	this._minOperande2	= parseInt($("#EpvMultiplication_Configuration_MinOperande2").val());
+	this._maxOperande2	= parseInt($("#EpvMultiplication_Configuration_MaxOperande2").val());
 	
 	return 	{
 				"nom": this.NomEpreuve,
 				"parametres": {
-					"operande1_max": this._plageOperande1,
-					"operande2_max": this._plageOperande2
+					"operande1_min": this._minOperande1,
+					"operande1_max": this._maxOperande1,
+					"operande2_min": this._minOperande2,
+					"operande2_max": this._maxOperande2
 				},
 				"historique": {
 				}

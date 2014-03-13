@@ -197,7 +197,7 @@ EpvAdditionATrous.prototype.validerReponse = function() {
 		resultat	= valeur + resultat;
 	}
 
-	if (eval(operande1) + eval(operande2) != eval(resultat))
+	if (parseInt(operande1) + parseInt(operande2) != parseInt(resultat))
 		return false;
 	
 	// Vérification des retenues
@@ -254,7 +254,7 @@ EpvAdditionATrous.prototype.construirePanneauConfiguration = function() {
  */
 EpvAdditionATrous.prototype.parametresEpreuve = function() {
 	// Récupération des données dans le panneau de configuration
-	_tailleOperandes	= $("#EpvAdditionATrous_Configuration_NbOperandes").val();
+	_tailleOperandes	= parseInt($("#EpvAdditionATrous_Configuration_NbOperandes").val());
 
 	return 	{
 				"nom": this.NomEpreuve,
